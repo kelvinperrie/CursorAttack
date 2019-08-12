@@ -1,8 +1,9 @@
 ﻿<!DOCTYPE html>
 <html>
+
 <head>
     <title>aaaa</title>
-    <meta charset="utf-8"/>
+    <meta charset="utf-8" />
     <style type="text/css">
         body {
             font-family: "Fira", Helvetica, Arial, sans-serif;
@@ -10,14 +11,16 @@
             text-align: center;
             color: #6b6b6b;
         }
+        
         .right-stuff {
             position: absolute;
             top: -100px;
             left: -100px;
-            background-image: url("images/ufo.png");
+            background-image: url("images/ufo.gif");
             width: 40px;
             height: 40px;
         }
+        
         .shot {
             top: -100px;
             left: -100px;
@@ -26,6 +29,7 @@
             width: 10px;
             height: 10px;
         }
+        
         .fire {
             position: absolute;
             background-image: url("images/fire.png");
@@ -34,16 +38,19 @@
         }
     </style>
 </head>
-<body >
+
+<body>
     <script src="jquery-3.3.1.min.js" type="text/javascript"></script>
     <script type="text/javascript">
-
-        $(document).ready(function () {
+        $(document).ready(function() {
 
             var attack = new AttackModel();
 
-            $("html").mousemove(function( event ) {
-                attack.SetNewTarget({x: event.pageX, y: event.pageY});
+            $("html").mousemove(function(event) {
+                attack.SetNewTarget({
+                    x: event.pageX,
+                    y: event.pageY
+                });
             });
 
         });
@@ -52,9 +59,15 @@
 
         var AttackModel = function() {
             var self = this;
-            
-            self.currentLocation = { x : 0, y : 0 };
-            self.target = { x : 300, y : 300 };
+
+            self.currentLocation = {
+                x: 0,
+                y: 0
+            };
+            self.target = {
+                x: 300,
+                y: 300
+            };
             self.standoffDistance = 100;
             self.travelDistance = 5;
             self.shotCount = 0;
@@ -74,9 +87,9 @@
 
                 var currentDistanceFromTarget = Math.sqrt((delta_x * delta_x) + (delta_y * delta_y));
                 self.currentDistanceFromTarget = currentDistanceFromTarget;
-                if(currentDistanceFromTarget - self.travelDistance < self.standoffDistance) {
+                if (currentDistanceFromTarget - self.travelDistance < self.standoffDistance) {
                     // dunno? do nothing
-                    return;   
+                    return;
                 }
 
                 // what is the adjacent (X)
@@ -90,43 +103,71 @@
             self.Draw = function() {
                 var top = self.currentLocation.y - 20;
                 var left = self.currentLocation.x - 20;
-                $('.right-stuff').css({top: top + "px", left: left + "px"});
+                $('.right-stuff').css({
+                    top: top + "px",
+                    left: left + "px"
+                });
             }
 
             self.Shoot = function() {
-                if(self.currentDistanceFromTarget < self.shootingRange) {
+                if (self.currentDistanceFromTarget < self.shootingRange) {
                     self.shotCount++;
-                    var shot = new ShotModel(self.shotCount, self.currentLocation.x,self.currentLocation.y, self.target.x,self.target.y)
+                    var shot = new ShotModel(self.shotCount, self.currentLocation.x, self.currentLocation.y, self.target.x, self.target.y)
                 }
-                setTimeout(function () { self.Shoot(); }, 500);
+                setTimeout(function() {
+                    self.Shoot();
+                }, 500);
             }
             self.Shoot();
 
+          // self.AnimateShip = function(id, frame) {
+          //         console.log("animate ship for " + id + ", " + frame);
+          //         $(id).css('background-image', 'url(images/ufo' + frame + '.png)');
+          //         frame = frame + 1;
+          //         if (frame > 5) {
+          //             frame = 1;
+          //         }
+          //         setTimeout(function() {
+          //             self.AnimateShip(id, frame);
+          //         }, 100);
+          //     }
+                //self.AnimateShip(".right-stuff", 1);
+
             // main loop
             self.Live = function() {
-                
+
                 self.Move();
                 self.Draw();
-                
 
-                setTimeout(function () { self.Live(); }, 50);
+
+                setTimeout(function() {
+                    self.Live();
+                }, 50);
             }
             self.Live();
 
             // generate the html needed
             self.Make = function() {
                 var body = $('body');
-                $(body).prepend($('<div>',{class:'right-stuff' }));
+                $(body).prepend($('<div>', {
+                    class: 'right-stuff'
+                }));
             }
             self.Make();
         };
 
-        var ShotModel = function(id, startx,starty, targetx,targety) {
+        var ShotModel = function(id, startx, starty, targetx, targety) {
             var self = this;
 
             self.id = id;
-            self.currentLocation = {x:startx,y:starty};
-            self.target = {x:targetx,y:targety};
+            self.currentLocation = {
+                x: startx,
+                y: starty
+            };
+            self.target = {
+                x: targetx,
+                y: targety
+            };
             self.travelDistance = 20;
             self.completed = false;
 
@@ -138,11 +179,11 @@
                 var theta_radians = Math.atan2(delta_y, delta_x)
 
                 var currentDistanceFromTarget = Math.sqrt((delta_x * delta_x) + (delta_y * delta_y));
-                if(currentDistanceFromTarget < self.travelDistance) {
+                if (currentDistanceFromTarget < self.travelDistance) {
                     self.currentLocation.x = self.target.x;
                     self.currentLocation.y = self.target.y;
                     self.Completed();
-                    return;   
+                    return;
                 }
 
                 // what is the adjacent (X)
@@ -158,48 +199,61 @@
                 var shotId = '#shot' + self.id;
                 console.log(shotId);
                 $(shotId).remove();
-                $(body).prepend($('<div>',{class:'fire', id: 'fire'+self.id, style: "left: " + (self.target.x-10) + "px; top: " + (self.target.y-10) + "px" }))
-                self.AnimateFire('#fire'+self.id, 1);
+                $(body).prepend($('<div>', {
+                    class: 'fire',
+                    id: 'fire' + self.id,
+                    style: "left: " + (self.target.x - 10) + "px; top: " + (self.target.y - 10) + "px"
+                }))
+                self.AnimateFire('#fire' + self.id, 1);
             }
 
             self.AnimateFire = function(id, frame) {
                 console.log("animate fire for " + id + ", " + frame);
-                $(id).css('background-image', 'url(images/fire'+frame+'.png)');
+                $(id).css('background-image', 'url(images/fire' + frame + '.png)');
                 frame = frame + 1;
-                if(frame > 3) {
+                if (frame > 3) {
                     frame = 1;
                 }
-                setTimeout(function () { self.AnimateFire(id, frame); }, 100);
+                setTimeout(function() {
+                    self.AnimateFire(id, frame);
+                }, 100);
             }
 
             self.Draw = function() {
                 var top = self.currentLocation.y - 5;
                 var left = self.currentLocation.x - 5;
-                $('#shot' + id).css({top: top + "px", left: left + "px"});
+                $('#shot' + id).css({
+                    top: top + "px",
+                    left: left + "px"
+                });
             }
 
             self.Live = function() {
-                if(self.completed == true) return;
+                if (self.completed == true) return;
                 self.Move();
                 self.Draw();
 
-                setTimeout(function () { self.Live(); }, 50);
+                setTimeout(function() {
+                    self.Live();
+                }, 50);
             }
             self.Live();
-            
+
             // generate the html needed
             self.Make = function() {
                 var body = $('body');
-                $(body).prepend($('<div>',{class:'shot', id:'shot'+self.id }))
+                $(body).prepend($('<div>', {
+                    class: 'shot',
+                    id: 'shot' + self.id
+                }))
             }
             self.Make();
         };
 
-        function randomIntFromInterval(min,max)
-        {
-            return Math.floor(Math.random()*(max-min+1)+min);
+        function randomIntFromInterval(min, max) {
+            return Math.floor(Math.random() * (max - min + 1) + min);
         }
-
     </script>
 </body>
+
 </html>
